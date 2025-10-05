@@ -210,6 +210,42 @@
   }
 </script>
 
+<script>
+  function qs(name){ return new URLSearchParams(location.search).get(name) || ""; }
+  function normalizeDate(s){
+    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s);
+    return m ? `${m[3]}-${m[2]}-${m[1]}` : s; // supports DD/MM/YYYY too
+  }
+
+  function buildGoogleCalendarLink(date, time) {
+    const iso = normalizeDate(date);
+    const start = new Date(`${iso}T${time}:00`);
+    const end   = new Date(start.getTime() + 2*60*60*1000);
+
+    const pad = n => n.toString().padStart(2, '0');
+    const fmt = d => `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+
+    const s = fmt(start);
+    const e = fmt(end);
+    const title = encodeURIComponent("Reserva no Espaço Trium");
+    const details = encodeURIComponent("Obrigado pela sua reserva! Esperamos por si no Espaço Trium.");
+    const location = encodeURIComponent("Marina de Cascais, Loja 37, Cascais, Portugal");
+
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${s}/${e}&details=${details}&location=${location}`;
+  }
+
+  const date = qs("date");
+  const time = qs("time");
+  const btn  = document.getElementById("googleCalendarLink");
+
+  if (date && time && btn) {
+    btn.href = buildGoogleCalendarLink(date, time);
+    btn.style.display = 'inline-flex';
+  } else if (btn) {
+    // no params → disable/hide button to avoid a dead click
+    btn.style.display = 'none';
+  }
+</script>
 
 
 </body>
