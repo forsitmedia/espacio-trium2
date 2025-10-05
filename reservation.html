@@ -332,7 +332,7 @@
 
             <input type="hidden" name="_template" value="table">
   <input type="text" name="Google_Calendar_Link" id="gcalLinkInput" style="display:none;">
-  
+
         </div>
 
         <button type="submit" data-text-pt="Confirmar Reserva" data-text-en="Confirm Reservation">Confirm Reservation</button>
@@ -467,16 +467,39 @@
     }
 
     const picker = new Litepicker({
-      element: dateInput,
-      format: 'YYYY-MM-DD',
-      minDate: new Date().toISOString().split('T')[0],
-      setup: (picker) => {
-        picker.on('selected', (date) => {
-          dateInput.value = date.format('YYYY-MM-DD');
-          updateTimeOptions();
-        });
+  element: dateInput,
+  format: 'YYYY-MM-DD',
+  minDate: new Date().toISOString().split('T')[0],
+  lockDaysFilter: (date) => {
+    // 🚫 Block Tuesdays (Tuesday = 2)
+    return date.getDay() === 2;
+  },
+  setup: (picker) => {
+    picker.on('selected', (date) => {
+      // Prevent selecting Tuesday manually
+      if (date.getDay() === 2) {
+        alert("🚫 O Espaço Trium está fechado à terça-feira. / Closed on Tuesdays.");
+        // Clear the selection if user somehow clicks it
+        picker.clearSelection();
+        dateInput.value = "";
+        return;
+      }
+
+      // ✅ Otherwise, save the valid date
+      dateInput.value = date.format('YYYY-MM-DD');
+      updateTimeOptions();
+    });
+
+    // Optional: also show a tooltip when hovering over disabled days
+    picker.on('render:day', (el, date) => {
+      if (date.getDay() === 2) {
+        el.classList.add('litepicker-day-locked');
+        el.setAttribute('title', 'Fechado à terça-feira / Closed on Tuesdays');
       }
     });
+  }
+});
+
 
    
 
@@ -578,25 +601,25 @@ textareas.forEach(el => {
   // Build autoresponse bilingual text
   function buildAutoText(lang) {
     const pt = [
-   "Olá! 🍷",
-      "Obrigado por reservar no Espaço Trium!",
-      "Recebemos a sua reserva e entraremos em contacto brevemente para confirmar.",
-      "",
-      "📍 Marina de Cascais, loja 37",
-      "",
-      "Se quiser, pode adicionar esta data ao seu Google Calendar:",
+       "Olá! 🍷",
+    "Obrigado por reservar no Espaço Trium!",
+    "A sua reserva foi recebida com sucesso. Caso seja necessário, entraremos em contacto consigo para qualquer eventualidade.",
+    "",
+    "📍 Marina de Cascais, loja 37",
+    "",
+    "Com carinho,",
+    "Equipa Espaço Trium"
     ].join("\n");
 
     const en = [
       "Hello! 🍷",
-      "Thank you for booking at Espaço Trium!",
-      "We’ve received your reservation and will contact you shortly to confirm.",
-      "",
-      "📅 You can add this date to your Google Calendar:",
-      "",
-      "Warmly,",
-      "The Espaço Trium Team",
-      "Marina de Cascais, Shop 37"
+    "Thank you for booking at Espaço Trium!",
+    "Your reservation has been successfully received. If needed, we’ll get in touch with you for any eventual updates.",
+    "",
+    "📍 Marina de Cascais, Shop 37",
+    "",
+    "Warmly,",
+    "The Espaço Trium Team"
     ].join("\n");
 
     return (lang === 'en') ? en : pt;
@@ -625,7 +648,7 @@ textareas.forEach(el => {
     const gcalLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${s}/${e}&details=${details}&location=${location}`;
 
     // Add it to autoresponse email and form redirect
-    if (auto) auto.value = buildAutoText(lang) + "\n" + gcalLink;
+    if (auto) auto.value = buildAutoText(lang);
 
     const nextInput = this.querySelector('input[name=\"_next\"]');
     if (nextInput) nextInput.value = 'https://forsitmedia.github.io/espacio-trium2/thankyou.html';
