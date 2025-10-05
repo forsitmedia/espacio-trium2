@@ -568,25 +568,21 @@ textareas.forEach(el => {
 
   </script>
 <!-- Auto-response + language logic -->
-<!-- Unified submit logic: autoresponse + short Google Calendar link + clean redirect -->
+<!-- Auto-response + Google Calendar integration -->
 <script>
-  const form = document.getElementById('reservation-form');
-  const auto = document.getElementById('auto');
+  const form = document.getElementById('reservation-form'); // your form
+  const auto = document.getElementById('auto');             // hidden autoresponse field
 
-  // Build autoresponse (PT/EN), address first, calendar link last
-  function buildAutoText(lang, gcalLink) {
+  // Build autoresponse bilingual text
+  function buildAutoText(lang) {
     const pt = [
-      "Olá! 🍷",
+   "Olá! 🍷",
       "Obrigado por reservar no Espaço Trium!",
       "Recebemos a sua reserva e entraremos em contacto brevemente para confirmar.",
       "",
       "📍 Marina de Cascais, loja 37",
       "",
-      "Se quiser, pode adicionar esta data ao seu Google Calendar copiando e colando o link abaixo:",
-      gcalLink,
-      "",
-      "Com carinho,",
-      "Equipa Espaço Trium"
+      "Se quiser, pode adicionar esta data ao seu Google Calendar:",
     ].join("\n");
 
     const en = [
@@ -594,80 +590,107 @@ textareas.forEach(el => {
       "Thank you for booking at Espaço Trium!",
       "We’ve received your reservation and will contact you shortly to confirm.",
       "",
-      "📍 Marina de Cascais, Shop 37",
-      "",
-      "If you’d like, you can add this date to your Google Calendar by copying and pasting the link below:",
-      gcalLink,
+      "📅 You can add this date to your Google Calendar:",
       "",
       "Warmly,",
-      "The Espaço Trium Team"
+      "The Espaço Trium Team",
+      "Marina de Cascais, Shop 37"
     ].join("\n");
 
     return (lang === 'en') ? en : pt;
   }
 
-  // Shorten Google Calendar URL (fallback to long if API/CORS fails)
-  async function shortenURL(longUrl) {
-    try {
-      const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
-      const txt = await res.text();
-      return (txt && txt.startsWith('http')) ? txt : longUrl;
-    } catch {
-      return longUrl;
-    }
-  }
-
-  form?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const lang   = document.documentElement.lang || 'pt';
-    const date   = document.getElementById('date-picker')?.value;
-    const time   = document.getElementById('time')?.value;
-    const name   = document.getElementById('name')?.value || '';
+  // When the form is submitted:
+  form?.addEventListener('submit', function () {
+    const lang = document.documentElement.lang || 'pt';
+    const date = document.getElementById('date-picker')?.value;
+    const time = document.getElementById('time')?.value;
+    const name = document.getElementById('name')?.value || '';
     const guests = document.getElementById('guests')?.value || '';
 
-    if (!date || !time) { this.submit(); return; }
-
-    // Build Google Calendar link (UTC times for all-day compatibility)
+    // Build Google Calendar link
     const start = new Date(`${date}T${time}:00`);
-    const end   = new Date(start.getTime() + 2 * 60 * 60 * 1000);
-    const pad   = n => n.toString().padStart(2, '0');
-    const fmt   = d => `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // 2 hours
+    const pad = n => n.toString().padStart(2, '0');
+    const fmt = d => `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
 
     const s = fmt(start);
-    const e2 = fmt(end);
-    const title    = encodeURIComponent("Reserva no Espaço Trium");
-    const details  = encodeURIComponent(`Reserva de ${name} para ${guests} pessoas.`);
+    const e = fmt(end);
+    const title = encodeURIComponent("Reserva no Espaço Trium");
+    const details = encodeURIComponent(`Reserva de ${name} para ${guests} pessoas.`);
     const location = encodeURIComponent("Marina de Cascais, Loja 37, Cascais, Portugal");
 
-    const longLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${s}/${e2}&details=${details}&location=${location}`;
-    const gcalLink = await shortenURL(longLink);
+    const gcalLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${s}/${e}&details=${details}&location=${location}`;
 
-    // Put the nice message into the autoresponse
-    if (auto) auto.value = buildAutoText(lang, gcalLink);
+    // Add it to autoresponse email and form redirect
+    if (auto) auto.value = buildAutoText(lang) + "\n" + gcalLink;
 
-    // Include the short link in the restaurant's email too
-    let linkInput = document.getElementById('gcalLinkInput');
-    if (!linkInput) {
-      linkInput = document.createElement('input');
-      linkInput.type = 'hidden';
-      linkInput.name = 'Google_Calendar_Link';   // readable label in email
-      linkInput.id   = 'gcalLinkInput';
-      form.appendChild(linkInput);
+    const nextInput = this.querySelector('input[name=\"_next\"]');
+    if (nextInput) nextInput.value = 'https://forsitmedia.github.io/espacio-trium2/thankyou.html';
+
+    // Include hidden field so restaurant sees the link too
+    let input = document.getElementById('gcalLinkInput');
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = '_gcalLink';
+      input.id = 'gcalLinkInput';
+      this.appendChild(input);
     }
-    linkInput.value = gcalLink;
-
-    // Redirect guest to thankyou with the chosen date/time (used by your GCal button there)
-    const nextBase = 'https://forsitmedia.github.io/espacio-trium2/thankyou.html';
-    const next     = `${nextBase}?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`;
-    const nextInput = form.querySelector('input[name="_next"]');
-    if (nextInput) nextInput.value = next;
-
-    // Submit after we’re done wiring fields
-    this.submit();
+    input.value = gcalLink;
   });
 </script>
 
+<script>
+  (function () {
+    const form = document.getElementById('reservation-form');
+    if (!form) return;
+
+    function buildGCalLink({ date, time, name, guests }) {
+      // date is "YYYY-MM-DD" (from Litepicker); support "DD/MM/YYYY" too
+      const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(date);
+      const iso = m ? `${m[3]}-${m[2]}-${m[1]}` : date;
+
+      const start = new Date(`${iso}T${time}:00`);
+      const end   = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2h
+
+      const pad = n => n.toString().padStart(2, '0');
+      const fmtUTC = d =>
+        `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}` +
+        `T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+
+      const s = fmtUTC(start);
+      const e = fmtUTC(end);
+
+      const title    = encodeURIComponent('Reserva no Espaço Trium');
+      const details  = encodeURIComponent(`Reserva de ${name || ''} para ${guests || ''} pessoas.`);
+      const location = encodeURIComponent('Marina de Cascais, Loja 37, Cascais, Portugal');
+
+      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${s}/${e}&details=${details}&location=${location}`;
+    }
+
+    form.addEventListener('submit', function () {
+      const date   = document.getElementById('date-picker')?.value || '';
+      const time   = document.getElementById('time')?.value || '';
+      const name   = document.getElementById('name')?.value || '';
+      const guests = document.getElementById('guests')?.value || '';
+
+      // Build link and drop it into a hidden input so FormSubmit emails it
+      const gcalLink = buildGCalLink({ date, time, name, guests });
+
+      let input = document.getElementById('gcalLinkInput');
+      if (!input) {
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'Google_Calendar_Link'; // appears as a field in the restaurant email
+        input.id   = 'gcalLinkInput';
+        form.appendChild(input);
+      }
+      input.value = gcalLink;
+      // No preventDefault — let the form submit normally
+    });
+  })();
+</script>
 
 
 </body>
