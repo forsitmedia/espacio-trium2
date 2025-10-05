@@ -268,8 +268,6 @@
   method="POST"
   ><input type="hidden" name="_next" value="https://forsitmedia.github.io/espacio-trium2/thankyou.html">
    <input type="hidden" name="_subject" value="🍽️ Nova Reserva - Espaço Trium">
-   <input type="hidden" name="_template" value="table">
-  <input type="text" name="Google_Calendar_Link" id="gcalLinkInput" style="display:none;">
      <!-- ✅ Autoresponse bilingual (PT + EN) -->
   <!-- Portuguese version -->
 <!-- PT autoresponse (keeps real line breaks) -->
@@ -332,7 +330,9 @@
   placeholder="Write here your request">
 </textarea>
 
-         
+            <input type="hidden" name="_template" value="table">
+  <input type="text" name="Google_Calendar_Link" id="gcalLinkInput" style="display:none;">
+  
         </div>
 
         <button type="submit" data-text-pt="Confirmar Reserva" data-text-en="Confirm Reservation">Confirm Reservation</button>
