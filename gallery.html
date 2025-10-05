@@ -219,6 +219,33 @@
   z-index: 9999 !important;
 }
 
+/* Make LG icons clearly visible */
+:root {
+  --lg-icon-color: #fff;                  /* lightGallery uses this */
+  --lg-toolbar-bg: rgba(0,0,0,0.35);      /* subtle contrast behind icons */
+}
+
+.lg-toolbar {
+  z-index: 99999 !important;
+  background: var(--lg-toolbar-bg) !important;
+
+  /* keep toolbar clear of iPhone notch / Safari UI */
+  padding-top: max(8px, env(safe-area-inset-top));
+  padding-right: max(8px, env(safe-area-inset-right));
+  padding-left: max(8px, env(safe-area-inset-left));
+}
+
+.lg-toolbar .lg-icon,
+.lg-toolbar .lg-close {
+  color: #fff !important;
+  fill: currentColor !important;
+  opacity: 1 !important;
+}
+
+.lg-toolbar .lg-close svg {
+  width: 28px;
+  height: 28px;
+}
 
 /* Make the close (X) icon visible and white */
 .lg-toolbar .lg-close,
