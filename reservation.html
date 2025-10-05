@@ -569,7 +569,7 @@ textareas.forEach(el => {
   </script>
 <!-- Auto-response + language logic -->
 <script>
-  const form = document.getElementById('reservation-form'); // ✅ use this ID everywhere
+  const form = document.getElementById('reservation-form'); // keep this ID
   const auto = document.getElementById('auto'); // hidden field
 
   const autoTextPT = [
@@ -577,8 +577,7 @@ textareas.forEach(el => {
     "Obrigado por reservar no Espaço Trium!",
     "Recebemos a sua reserva e entraremos em contacto brevemente para confirmar.",
     "",
-    "📅 Adicione esta reserva ao seu calendário:",
-    "https://forsitmedia.github.io/espacio-trium2/reservation.ics",
+    "📅 Pode adicionar a reserva ao seu calendário na página de confirmação.",
     "",
     "Com carinho,",
     "Equipa Espaço Trium",
@@ -590,8 +589,7 @@ textareas.forEach(el => {
     "Thank you for booking at Espaço Trium!",
     "We’ve received your reservation and will contact you shortly to confirm.",
     "",
-    "📅 Add this reservation to your calendar:",
-    "https://forsitmedia.github.io/espacio-trium2/reservation.ics",
+    "📅 You can add the reservation to your calendar on the confirmation page.",
     "",
     "Warmly,",
     "The Espaço Trium Team",
@@ -606,25 +604,25 @@ textareas.forEach(el => {
     opt.addEventListener('click', () => setAutoResponseByLang(opt.dataset.lang))
   );
 
-  // set once on load too (defaults to page lang)
+  // set once on load (defaults to page lang)
   setAutoResponseByLang(document.documentElement.lang || 'pt');
 </script>
 
+
 <!-- Dynamic ICS generator (uses your current IDs: #date-picker and #time) -->
 <script>
-  // If your date picker outputs DD/MM/YYYY, normalize it; otherwise uses YYYY-MM-DD as-is.
+  // handle DD/MM/YYYY or YYYY-MM-DD
   function normalizeDateValue(str) {
-    // Try DD/MM/YYYY → YYYY-MM-DD
     const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(str);
-    return m ? `${m[3]}-${m[2]}-${m[1]}` : str; 
+    return m ? `${m[3]}-${m[2]}-${m[1]}` : str;
   }
 
   function generateICS(date, time) {
-    const isoDate = normalizeDateValue(date); // ensure ISO-like
+    const isoDate = normalizeDateValue(date);
     const start = new Date(`${isoDate}T${time}:00`);
-    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // 2 hours
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2h
 
-    const formatDate = (d) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+    const fmt = d => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
     const icsContent = `
 BEGIN:VCALENDAR
@@ -632,41 +630,43 @@ VERSION:2.0
 PRODID:-//Espaço Trium//Reservation Calendar//EN
 BEGIN:VEVENT
 UID:${Date.now()}@espacotrium.com
-DTSTAMP:${formatDate(new Date())}
+DTSTAMP:${fmt(new Date())}
 SUMMARY:Reserva no Espaço Trium
 DESCRIPTION:Obrigado pela sua reserva! Esperamos por si no Espaço Trium.
 LOCATION:Marina de Cascais, Loja 37, Cascais, Portugal
-DTSTART:${formatDate(start)}
-DTEND:${formatDate(end)}
+DTSTART:${fmt(start)}
+DTEND:${fmt(end)}
 END:VEVENT
 END:VCALENDAR`.trim();
 
     const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "EspacoTrium_Reservation.ics";
-    link.click();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "EspacoTrium_Reservation.ics";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   }
 
-  // Use the SAME form ID as above
-  document.getElementById("reservation-form")?.addEventListener("submit", function (e) {
-    // set the auto message for the current language before submit
-    const lang = document.documentElement.lang || 'pt';
-    typeof setAutoResponseByLang === 'function' && setAutoResponseByLang(lang);
-
-    // create ICS based on selected date/time
+  const formEl = document.getElementById("reservation-form");
+  formEl?.addEventListener("submit", function (e) {
     const date = document.getElementById("date-picker")?.value;
     const time = document.getElementById("time")?.value;
 
     if (date && time) {
-      // Generate ICS download without interrupting the real submit
+      // ensure download starts before leaving the page
+      e.preventDefault();
+      // refresh autoresponse with current language just before submit
+      const lang = document.documentElement.lang || 'pt';
+      if (typeof setAutoResponseByLang === 'function') setAutoResponseByLang(lang);
+
       generateICS(date, time);
+      setTimeout(() => this.submit(), 300); // then submit to FormSubmit
     }
-    // Let the form continue submitting (email/redirect)
-    // If your provider needs a normal submit, do not preventDefault.
-    // If you later switch to fetch(), then you'd preventDefault and handle manually.
+    // if date/time missing, let HTML5 'required' handle it without preventDefault
   });
 </script>
+
 
 
 
