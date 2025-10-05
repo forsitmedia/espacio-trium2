@@ -1,0 +1,10 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:Reserva no Espaço Trium
+DESCRIPTION:Obrigado pela sua reserva! Esperamos por si no Espaço Trium.
+LOCATION:Marina de Cascais, loja 37, Cascais, Portugal
+DTSTART:20251010T200000Z
+DTEND:20251010T220000Z
+END:VEVENT
+END:VCALENDAR
