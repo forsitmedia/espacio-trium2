@@ -569,101 +569,55 @@ textareas.forEach(el => {
   </script>
 <!-- Auto-response + language logic -->
 <script>
-  const form = document.getElementById('reservation-form'); // keep this ID
-  const auto = document.getElementById('auto'); // hidden field
+  const form = document.getElementById('reservation-form');   // your form
+  const auto = document.getElementById('auto');               // hidden _autoresponse
 
-  const autoTextPT = [
-    "Olá! 🍷",
-    "Obrigado por reservar no Espaço Trium!",
-    "Recebemos a sua reserva e entraremos em contacto brevemente para confirmar.",
-    "",
-    "📅 Pode adicionar a reserva ao seu calendário na página de confirmação.",
-    "",
-    "Com carinho,",
-    "Equipa Espaço Trium",
-    "Marina de Cascais, loja 37"
-  ].join("\n");
+  // Build autoresponse text including a dynamic link back to your site
+  function buildAutoText(lang, link) {
+    const pt = [
+      "Olá! 🍷",
+      "Obrigado por reservar no Espaço Trium!",
+      "Recebemos a sua reserva e entraremos em contacto brevemente para confirmar.",
+      "",
+      "📅 Para adicionar a sua reserva ao calendário, clique aqui:",
+      link,
+      "",
+      "Com carinho,",
+      "Equipa Espaço Trium",
+      "Marina de Cascais, loja 37"
+    ].join("\n");
 
-  const autoTextEN = [
-    "Hello! 🍷",
-    "Thank you for booking at Espaço Trium!",
-    "We’ve received your reservation and will contact you shortly to confirm.",
-    "",
-    "📅 You can add the reservation to your calendar on the confirmation page.",
-    "",
-    "Warmly,",
-    "The Espaço Trium Team",
-    "Marina de Cascais, Shop 37"
-  ].join("\n");
+    const en = [
+      "Hello! 🍷",
+      "Thank you for booking at Espaço Trium!",
+      "We’ve received your reservation and will contact you shortly to confirm.",
+      "",
+      "📅 To add your reservation to your calendar, click here:",
+      link,
+      "",
+      "Warmly,",
+      "The Espaço Trium Team",
+      "Marina de Cascais, Shop 37"
+    ].join("\n");
 
-  function setAutoResponseByLang(lang) {
-    if (auto) auto.value = (lang === 'en') ? autoTextEN : autoTextPT;
+    return (lang === 'en') ? en : pt;
   }
 
-  document.querySelectorAll('.lang-option').forEach(opt =>
-    opt.addEventListener('click', () => setAutoResponseByLang(opt.dataset.lang))
-  );
+  // On submit: inject a dynamic link (with date & time) into _autoresponse and _next
+  form?.addEventListener('submit', function () {
+    const lang = document.documentElement.lang || 'pt';
+    const date = document.getElementById('date-picker')?.value;
+    const time = document.getElementById('time')?.value;
 
-  // set once on load (defaults to page lang)
-  setAutoResponseByLang(document.documentElement.lang || 'pt');
-</script>
+    const base = 'https://forsitmedia.github.io/espacio-trium2/thankyou.html';
+    const calLink = (date && time)
+      ? `${base}?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`
+      : base;
 
+    if (auto) auto.value = buildAutoText(lang, calLink);
 
-<!-- Dynamic ICS generator (uses your current IDs: #date-picker and #time) -->
-<script>
-  // handle DD/MM/YYYY or YYYY-MM-DD
-  function normalizeDateValue(str) {
-    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(str);
-    return m ? `${m[3]}-${m[2]}-${m[1]}` : str;
-  }
-
-  function generateICS(date, time) {
-    const isoDate = normalizeDateValue(date);
-    const start = new Date(`${isoDate}T${time}:00`);
-    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2h
-
-    const fmt = d => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-
-    const icsContent = `
-BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Espaço Trium//Reservation Calendar//EN
-BEGIN:VEVENT
-UID:${Date.now()}@espacotrium.com
-DTSTAMP:${fmt(new Date())}
-SUMMARY:Reserva no Espaço Trium
-DESCRIPTION:Obrigado pela sua reserva! Esperamos por si no Espaço Trium.
-LOCATION:Marina de Cascais, Loja 37, Cascais, Portugal
-DTSTART:${fmt(start)}
-DTEND:${fmt(end)}
-END:VEVENT
-END:VCALENDAR`.trim();
-
-    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "EspacoTrium_Reservation.ics";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }
-
-  const formEl = document.getElementById("reservation-form");
-  formEl?.addEventListener("submit", function (e) {
-    const date = document.getElementById("date-picker")?.value;
-    const time = document.getElementById("time")?.value;
-
-    if (date && time) {
-      // ensure download starts before leaving the page
-      e.preventDefault();
-      // refresh autoresponse with current language just before submit
-      const lang = document.documentElement.lang || 'pt';
-      if (typeof setAutoResponseByLang === 'function') setAutoResponseByLang(lang);
-
-      generateICS(date, time);
-      setTimeout(() => this.submit(), 300); // then submit to FormSubmit
-    }
-    // if date/time missing, let HTML5 'required' handle it without preventDefault
+    const nextInput = this.querySelector('input[name="_next"]');
+    if (nextInput) nextInput.value = calLink;
   });
 </script>
 
