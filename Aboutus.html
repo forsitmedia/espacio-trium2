@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-text-pt="Sobre Nós | Espaço Trium" data-text-en="About Us | Espaço Trium">Sobre Nós | Espaço Trium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+     /* RESET + BASE */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      padding-top: 72px;
+      background: #fffaf5;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1200;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      /* CRITICAL FIX: Removed justify-content: space-between; */
+      align-items: center;
+      padding: 1.2rem 2rem;
+      border-bottom: 1px solid rgba(140, 79, 48, 0.08);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #8c4f30;
+      margin-right: 2rem; /* CRITICAL FIX: Added margin-right for spacing */
+    }
+
+    /* Language Switcher Styles - FIXED TO MATCH GALLERY.HTML */
+    .language-switcher {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem; /* CRITICAL FIX: Increased gap */
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-left: auto; /* Push it to the right */
+    }
+
+    .language-switcher span {
+      color: #8c4f30;
+      cursor: pointer;
+      padding: 0.1rem 0.5rem; /* CRITICAL FIX: Increased padding */
+      border-radius: 5px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .language-switcher span.active {
+      background: #8c4f30;
+      color: #fff;
+    }
+
+    .language-switcher span:hover:not(.active) {
+      background: rgba(140, 79, 48, 0.1);
+      color: #8c4f30;
+    }
+
+    /* --- MENU TOGGLE & DROPDOWN MENU (existing styles) --- */
+    .menu-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      color: #8c4f30;
+      /* margin-left: auto; is now handled implicitly by the language-switcher's auto-margin pushing it */
+    }
+
+    .menu-toggle .bar {
+      width: 28px;
+      height: 3px;
+      margin: 4px 0;
+      background: #8c4f30;
+      border-radius: 2px;
+      transition: 0.4s;
+    }
+
+    .menu-toggle.open .bar:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .menu-toggle.open .bar:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-toggle.open .bar:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    .dropdown-menu {
+      position: fixed;
+      top: -100vh;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: #8c4f30;
+      color: #fff;
+      transition: top 0.4s cubic-bezier(.77,0,.18,1);
+      z-index: 1000;
+      padding-top: 80px;
+    }
+
+    .dropdown-menu.open {
+      top: 0;
+    }
+
+    .dropdown-menu ul {
+      list-style: none;
+      padding: 0 2rem;
+    }
+
+    .dropdown-menu li {
+      margin: 1.5rem 0;
+    }
+
+    .dropdown-menu a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.3rem;
+      font-weight: 500;
+      display: block;
+      transition: color 0.2s;
+    }
+
+    .dropdown-menu a:hover {
+      color: #ffe0c2;
+    }
+
+    /* CONTENT STYLING */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .intro h2 {
+      font-size: 1.6rem;
+      color: #8c4f30;
+      margin-bottom: 0.5rem;
+    }
+
+    .intro h3 {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: #333;
+    }
+
+    .intro p {
+      font-size: 1rem;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .intro a {
+      text-decoration: none;
+    }
+
+    footer {
+      background: #8c4f30;
+      color: #fff;
+      text-align: center;
+      padding: 2rem 0;
+      margin-top: 3rem;
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .scroll-dot {
+      position: fixed;
+      top: 80px;
+      right: 8px;
+      width: 6px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(6px);
+      border-radius: 20px;
+      z-index: 999;
+      transition: top 0.2s ease-out;
+    }
+
+    /* CONTENT */
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 2rem;
+      text-align: center;
+    }
+    .container img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      margin: 1.5rem 0 2rem;
+    }
+    h1 {
+      color: #8c4f30;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+    strong { color: #8c4f30; }
+
+    footer {
+      background: #8c4f30;
+      color: #ffffff;
+      text-align: center;
+      padding: 2rem 0;
+      margin-top: 3rem;
+    }
+    footer p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+
+  </style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">Espaço Trium</div>
+  <div class="language-switcher">
+    <span class="lang-option active" data-lang="pt">PT</span>
+    <span class="lang-option" data-lang="en">EN</span>
+  </div>
+  <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </button>
+</header>
+
+<nav class="dropdown-menu" id="dropdownMenu">
+  <ul>
+    <li><a href="index.html" data-text-pt="Home" data-text-en="Home">Home</a></li>
+    <li><a href="menu.html" data-text-pt="Menu" data-text-en="Menu">Menu</a></li>
+    <li><a href="gallery.html" data-text-pt="Galeria" data-text-en="Gallery">Gallery</a></li>
+    <li><a href="reservation.html" data-text-pt="Reservas" data-text-en="Reservations">Reservations</a></li>
+    <li><a href="sobre-nos.html" class="active" data-text-pt="Sobre Nós" data-text-en="About Us">About Us</a></li>
+    <li><a href="contact.html" data-text-pt="Contactos" data-text-en="Contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="container">
+  <h1 data-text-pt="Sobre Nós" data-text-en="About Us">Sobre Nós</h1>
+
+  <img src="images/about us /Owners Picture 2.png" alt="Espaço Trium Team Photo">
+
+  <p data-text-pt="
+  O Espaço Trium nasceu em 2015, quando três irmãs — <strong>Nádia</strong>, <strong>Josiane</strong> e <strong>Neah</strong> — decidiram transformar anos de experiência na restauração em um sonho próprio. Vindas do Mato Grosso do Sul, no Brasil🇧🇷, elas trouxeram consigo o sabor da sua terra e a paixão por servir com coração.
+  " data-text-en="
+  Espaço Trium was born in 2015, when three sisters — <strong>Nádia</strong>, <strong>Josiane</strong> and <strong>Neah</strong> — decided to turn years of experience in hospitality into their own dream. Coming from Mato Grosso do Sul, Brazil🇧🇷, they brought with them the flavor of home and a deep passion for heartfelt service.
+  ">
+  O Espaço Trium nasceu em 2015, quando três irmãs — <strong>Nádia</strong>, <strong>Josiane</strong> e <strong>Neah</strong> — decidiram transformar anos de experiência na restauração em um sonho próprio. Vindas do Mato Grosso do Sul, no Brasil, elas trouxeram consigo o sabor da sua terra e a paixão por servir com coração.
+  </p>
+
+  <p data-text-pt="
+  <strong>Nádia</strong> 👩🏼‍🍳 é a chef e alma da cozinha — criativa, organizada e humana. Ela dá vida aos pratos e garante que cada refeição seja feita com dedicação e talento. <br> <strong>Josiane</strong> 💃🏼 é o sorriso que recebe os clientes e os faz sentir-se em casa. Com paciência e carinho, ela cuida de cada detalhe da experiência.<br> <strong>Neah</strong> 🧏‍♀️ é o equilíbrio e a organização, sempre atenta a tudo o que é preciso fazer, garantindo que tudo funcione na perfeição.
+  " data-text-en="
+  <strong>Nádia</strong> 👩🏼‍🍳 is the chef and heart of the kitchen — creative, organized, and deeply human. She gives life to each dish with passion and precision.<br> <strong>Josiane</strong> 💃🏼 is the welcoming smile that makes every guest feel at home. With patience and warmth, she ensures every experience is special.<br> <strong>Neah</strong> 🧏‍♀️ is the balance and structure — always attentive, ensuring everything runs smoothly.
+  ">
+  <strong>Nádia</strong> é a chef e alma da cozinha — criativa, organizada e humana. Ela dá vida aos pratos e garante que cada refeição seja feita com dedicação e talento. <strong>Josiane</strong> é o sorriso que recebe os clientes e os faz sentir-se em casa. Com paciência e carinho, ela cuida de cada detalhe da experiência. <strong>Neah</strong> é o equilíbrio e a organização, sempre atenta a tudo o que é preciso fazer, garantindo que tudo funcione na perfeição.
+  </p>
+
+  <p data-text-pt="
+  Para elas, <i> cada cliente é parte da família </i>. Muitos visitantes dizem sentir-se como se já as conhecessem há anos — e acabam por voltar, viagem após viagem. A qualidade é o pilar do restaurante: produtos frescos e bem escolhidos são o segredo para garantir que cada pessoa saia satisfeita e com vontade de regressar.
+  " data-text-en="
+  For them,  <i> every guest becomes part of the family </i>. Many say they feel as if they’ve known the sisters for years — and keep returning, trip after trip. Quality is the heart of their philosophy: using only the freshest, finest ingredients ensures every guest leaves satisfied and eager to return.
+  ">
+  Para elas, cada cliente é parte da família. Muitos visitantes dizem sentir-se como se já as conhecessem há anos — e acabam por voltar, viagem após viagem. A qualidade é o pilar do restaurante: produtos frescos e bem escolhidos são o segredo para garantir que cada pessoa saia satisfeita e com vontade de regressar.
+  </p>
+
+  <p data-text-pt="
+  No futuro, o objetivo das três irmãs é expandir o projeto e permitir que mais pessoas descubram e se apaixonem pela sua cozinha. <strong>Espaço Trium</strong> é mais do que um restaurante — é um espaço onde a comida e o coração andam juntos.
+  " data-text-en="
+  Looking ahead, the sisters dream of expanding their project and sharing their cuisine with more people. <strong>Espaço Trium</strong> is more than a restaurant — it’s a space where food and heart come together.
+  ">
+  No futuro, o objetivo das três irmãs é expandir o projeto e permitir que mais pessoas descubram e se apaixonem pela sua cozinha. <strong>Espaço Trium</strong> é mais do que um restaurante — é um espaço onde a comida e o coração andam juntos.
+  </p>
+</section>
+
+<footer>
+  <p data-text-pt="© 2025 Espaço Trium<br>Website artesanalmente criado com cuidado" data-text-en="© 2025 Espaço Trium<br>Website handcrafted with care">© 2025 Espaço Trium<br>Website artesanalmente criado com cuidado</p>
+</footer>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  if (menuToggle && dropdownMenu) {
+    menuToggle.addEventListener('click', () => {
+      menuToggle.classList.toggle('open');
+      dropdownMenu.classList.toggle('open');
+    });
+    dropdownMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuToggle.classList.remove('open');
+        dropdownMenu.classList.remove('open');
+      });
+    });
+  }
+
+  const langOptions = document.querySelectorAll('.lang-option');
+  const elementsToTranslate = document.querySelectorAll('[data-text-pt], [data-text-en]');
+  const htmlTag = document.querySelector('html');
+  function setLanguage(lang) {
+    langOptions.forEach(o => o.classList.toggle('active', o.dataset.lang === lang));
+    elementsToTranslate.forEach(el => {
+      const key = `data-text-${lang}`;
+      if (el.hasAttribute(key)) el.innerHTML = el.getAttribute(key);
+    });
+    htmlTag.setAttribute('lang', lang);
+  }
+  langOptions.forEach(option => option.addEventListener('click', () => setLanguage(option.dataset.lang)));
+  setLanguage('pt');
+</script>
+
+</body>
+</html>
