@@ -268,6 +268,8 @@
   method="POST"
   ><input type="hidden" name="_next" value="https://forsitmedia.github.io/espacio-trium2/thankyou.html">
    <input type="hidden" name="_subject" value="🍽️ Nova Reserva - Espaço Trium">
+   <input type="hidden" name="_template" value="table">
+  <input type="text" name="Google_Calendar_Link" id="gcalLinkInput" style="display:none;">
      <!-- ✅ Autoresponse bilingual (PT + EN) -->
   <!-- Portuguese version -->
 <!-- PT autoresponse (keeps real line breaks) -->
@@ -641,55 +643,49 @@ textareas.forEach(el => {
   });
 </script>
 
+
+<!-- ✅ STEP 2: restaurant link filler – LAST script on the page -->
 <script>
-  (function () {
-    const form = document.getElementById('reservation-form');
-    if (!form) return;
+(function () {
+  const form = document.getElementById('reservation-form');
+  if (!form) return;
 
-    function buildGCalLink({ date, time, name, guests }) {
-      // date is "YYYY-MM-DD" (from Litepicker); support "DD/MM/YYYY" too
-      const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(date);
-      const iso = m ? `${m[3]}-${m[2]}-${m[1]}` : date;
+  function buildGCalLink({ date, time, name, guests }) {
+    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(date);
+    const iso = m ? `${m[3]}-${m[2]}-${m[1]}` : date;
 
-      const start = new Date(`${iso}T${time}:00`);
-      const end   = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2h
+    const start = new Date(`${iso}T${time}:00`);
+    const end   = new Date(start.getTime() + 2 * 60 * 60 * 1000);
 
-      const pad = n => n.toString().padStart(2, '0');
-      const fmtUTC = d =>
-        `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}` +
-        `T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+    const pad = n => n.toString().padStart(2,'0');
+    const fmtUTC = d =>
+      `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}` +
+      `T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
 
-      const s = fmtUTC(start);
-      const e = fmtUTC(end);
+    const s = fmtUTC(start);
+    const e = fmtUTC(end);
 
-      const title    = encodeURIComponent('Reserva no Espaço Trium');
-      const details  = encodeURIComponent(`Reserva de ${name || ''} para ${guests || ''} pessoas.`);
-      const location = encodeURIComponent('Marina de Cascais, Loja 37, Cascais, Portugal');
+    const title    = encodeURIComponent('Reserva no Espaço Trium');
+    const details  = encodeURIComponent(`Reserva de ${name || ''} para ${guests || ''} pessoas.`);
+    const location = encodeURIComponent('Marina de Cascais, Loja 37, Cascais, Portugal');
 
-      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${s}/${e}&details=${details}&location=${location}`;
-    }
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${s}/${e}&details=${details}&location=${location}`;
+  }
 
-    form.addEventListener('submit', function () {
-      const date   = document.getElementById('date-picker')?.value || '';
-      const time   = document.getElementById('time')?.value || '';
-      const name   = document.getElementById('name')?.value || '';
-      const guests = document.getElementById('guests')?.value || '';
+  form.addEventListener('submit', function () {
+    const date   = document.getElementById('date-picker')?.value || '';
+    const time   = document.getElementById('time')?.value || '';
+    const name   = document.getElementById('name')?.value || '';
+    const guests = document.getElementById('guests')?.value || '';
 
-      // Build link and drop it into a hidden input so FormSubmit emails it
-      const gcalLink = buildGCalLink({ date, time, name, guests });
+    const gcalLink = buildGCalLink({ date, time, name, guests });
 
-      let input = document.getElementById('gcalLinkInput');
-      if (!input) {
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'Google_Calendar_Link'; // appears as a field in the restaurant email
-        input.id   = 'gcalLinkInput';
-        form.appendChild(input);
-      }
-      input.value = gcalLink;
-      // No preventDefault — let the form submit normally
-    });
-  })();
+    const input = document.getElementById('gcalLinkInput'); // already in the form
+    if (input) input.value = gcalLink;
+
+    // don’t preventDefault — let FormSubmit send the form
+  });
+})();
 </script>
 
 
