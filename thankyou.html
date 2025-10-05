@@ -151,15 +151,16 @@
     </h1>
 
 
-<button id="addToCalendar" class="add-to-calendar" type="button">
-  <!-- inline calendar icon -->
+<a id="googleCalendarLink" class="add-to-calendar" target="_blank" rel="noopener">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <rect x="3" y="4" width="18" height="18" rx="3"></rect>
     <path d="M16 2v4M8 2v4M3 10h18"></path>
     <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"></path>
   </svg>
-  <span data-text-pt="Adicionar ao Calendário" data-text-en="Add to Calendar">Add to your  Calendar</span>
-</button>
+  <span data-text-pt="Adicionar ao Google Calendar" data-text-en="Add to Google Calendar">
+    Add to Google Calendar
+  </span>
+</a>
 
 
 
@@ -171,50 +172,43 @@
   </div>
 
 
-
-
 <script>
   function qs(name){ return new URLSearchParams(location.search).get(name) || ""; }
-  function normalizeDateValue(str){
-    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(str);
-    return m ? `${m[3]}-${m[2]}-${m[1]}` : str; // supports DD/MM/YYYY or YYYY-MM-DD
-  }
-  function generateICS(date, time){
-    const isoDate = normalizeDateValue(date);
-    const start = new Date(`${isoDate}T${time}:00`);
-    const end = new Date(start.getTime() + 2*60*60*1000);
-    const fmt = d => d.toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
-    const ics = `
-BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Espaço Trium//Reservation Calendar//EN
-BEGIN:VEVENT
-UID:${Date.now()}@espacotrium.com
-DTSTAMP:${fmt(new Date())}
-SUMMARY:Reserva no Espaço Trium
-DESCRIPTION:Obrigado pela sua reserva! Esperamos por si no Espaço Trium.
-LOCATION:Marina de Cascais, Loja 37, Cascais, Portugal
-DTSTART:${fmt(start)}
-DTEND:${fmt(end)}
-END:VEVENT
-END:VCALENDAR`.trim();
-    const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = "EspacoTrium_Reservation.ics";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+
+  function buildGoogleCalendarLink(date, time) {
+    const start = new Date(`${date}T${time}:00`);
+    const end = new Date(start.getTime() + 2*60*60*1000); // +2h
+
+    const pad = n => n.toString().padStart(2, '0');
+    const fmt = d =>
+      `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+
+    const s = fmt(start);
+    const e = fmt(end);
+    const title = encodeURIComponent("Reserva no Espaço Trium");
+    const details = encodeURIComponent("Obrigado pela sua reserva! Esperamos por si no Espaço Trium.");
+    const location = encodeURIComponent("Marina de Cascais, Loja 37, Cascais, Portugal");
+
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${s}/${e}&details=${details}&location=${location}`;
   }
 
-  const d = qs('date');
-  const t = qs('time');
-  document.getElementById('addToCalendar')?.addEventListener('click', () => {
-    if (d && t) generateICS(d, t);
-    else alert('Missing date or time – please go back and choose both.');
-  });
+  const date = qs("date");
+  const time = qs("time");
+
+  if (date && time) {
+    const link = buildGoogleCalendarLink(date, time);
+    const a = document.getElementById("googleCalendarLink");
+    if (a) a.href = link;
+  }
+
+  // Localize the instruction sentence
+  const lang = document.documentElement.lang || 'pt';
+  const instr = document.getElementById("addInstruction");
+  if (instr) {
+    const text = instr.getAttribute(`data-text-${lang}`);
+    if (text) instr.textContent = text;
+  }
 </script>
-
 
 
 
