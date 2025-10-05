@@ -77,6 +77,68 @@
     @keyframes fadeIn {
       to { opacity: 1; transform: translateY(0); }
     }
+
+
+:root {
+  --brand: #8c4f30;
+  --brand-dark: #6f3c24;
+  --ring: rgba(140, 79, 48, 0.35);
+}
+
+.add-to-calendar {
+  appearance: none;
+  border: 0;
+  border-radius: 9999px;             /* pill */
+  background: var(--brand);
+  color: #fff;
+  font: 700 1rem/1.1 "Montserrat", system-ui, -apple-system, sans-serif;
+  letter-spacing: .02em;
+  padding: .9rem 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(140, 79, 48, 0.22);
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  margin-top: 1rem;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.add-to-calendar svg {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  color: currentColor;               /* icon inherits white */
+}
+
+.add-to-calendar:hover { 
+  background: var(--brand-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(140, 79, 48, 0.28);
+}
+
+.add-to-calendar:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(140, 79, 48, 0.2);
+}
+
+.add-to-calendar:focus-visible {
+  outline: none;
+  box-shadow: 0 6px 16px rgba(140, 79, 48, 0.22), 0 0 0 4px var(--ring);
+}
+
+/* iPhone safe-area breathing room if near the bottom */
+@supports (padding: max(0px)) {
+  .add-to-calendar { margin-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .add-to-calendar { transition: none; }
+}
+
+
+
   </style>
 </head>
 
@@ -87,11 +149,74 @@
       Obrigado pela sua reserva!
       <span>Thank you for your reservation!</span>
     </h1>
+
+
+<button id="addToCalendar" class="add-to-calendar" type="button">
+  <!-- inline calendar icon -->
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <rect x="3" y="4" width="18" height="18" rx="3"></rect>
+    <path d="M16 2v4M8 2v4M3 10h18"></path>
+    <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"></path>
+  </svg>
+  <span data-text-pt="Adicionar ao Calendário" data-text-en="Add to Calendar">Add to your  Calendar</span>
+</button>
+
+
+
     <p>
       Recebemos os seus dados e entraremos em contacto brevemente.<br>
       We have received your details and will contact you shortly.
     </p>
     <a href="index.html">← Voltar / Back to Home</a>
   </div>
+
+
+
+
+<script>
+  function qs(name){ return new URLSearchParams(location.search).get(name) || ""; }
+  function normalizeDateValue(str){
+    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(str);
+    return m ? `${m[3]}-${m[2]}-${m[1]}` : str; // supports DD/MM/YYYY or YYYY-MM-DD
+  }
+  function generateICS(date, time){
+    const isoDate = normalizeDateValue(date);
+    const start = new Date(`${isoDate}T${time}:00`);
+    const end = new Date(start.getTime() + 2*60*60*1000);
+    const fmt = d => d.toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
+    const ics = `
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Espaço Trium//Reservation Calendar//EN
+BEGIN:VEVENT
+UID:${Date.now()}@espacotrium.com
+DTSTAMP:${fmt(new Date())}
+SUMMARY:Reserva no Espaço Trium
+DESCRIPTION:Obrigado pela sua reserva! Esperamos por si no Espaço Trium.
+LOCATION:Marina de Cascais, Loja 37, Cascais, Portugal
+DTSTART:${fmt(start)}
+DTEND:${fmt(end)}
+END:VEVENT
+END:VCALENDAR`.trim();
+    const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = "EspacoTrium_Reservation.ics";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  const d = qs('date');
+  const t = qs('time');
+  document.getElementById('addToCalendar')?.addEventListener('click', () => {
+    if (d && t) generateICS(d, t);
+    else alert('Missing date or time – please go back and choose both.');
+  });
+</script>
+
+
+
+
 </body>
 </html>
