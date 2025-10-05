@@ -650,13 +650,8 @@ textareas.forEach(el => {
     // Add it to autoresponse email and form redirect
     if (auto) auto.value = buildAutoText(lang);
 
-   const nextInput = form.querySelector('input[name="_next"]');
-if (nextInput) {
-  const base = 'https://forsitmedia.github.io/espacio-trium2/thankyou.html';
-  nextInput.value = `${base}?date=${encodeURIComponent(
-    document.getElementById('date-picker').value
-  )}&time=${encodeURIComponent(
-    document.getElementById('time').value ;
+    const nextInput = this.querySelector('input[name=\"_next\"]');
+    if (nextInput) nextInput.value = 'https://forsitmedia.github.io/espacio-trium2/thankyou.html';
 
     // Include hidden field so restaurant sees the link too
     let input = document.getElementById('gcalLinkInput');
