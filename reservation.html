@@ -568,16 +568,20 @@ textareas.forEach(el => {
 
   </script>
 <!-- Auto-response + language logic -->
+<!-- Auto-response + Google Calendar integration -->
 <script>
-  const form = document.getElementById('reservation-form');   // your form
-  const auto = document.getElementById('auto');               // hidden _autoresponse
+  const form = document.getElementById('reservation-form'); // your form
+  const auto = document.getElementById('auto');             // hidden autoresponse field
 
-  // Build autoresponse text including a dynamic link back to your site
-  function buildAutoText(lang, link) {
+  // Build autoresponse bilingual text
+  function buildAutoText(lang) {
     const pt = [
       "Olá! 🍷",
       "Obrigado por reservar no Espaço Trium!",
       "Recebemos a sua reserva e entraremos em contacto brevemente para confirmar.",
+      "",
+      "📅 Pode adicionar esta data ao seu Google Calendar:",
+      "",
       "Com carinho,",
       "Equipa Espaço Trium",
       "Marina de Cascais, loja 37"
@@ -587,6 +591,9 @@ textareas.forEach(el => {
       "Hello! 🍷",
       "Thank you for booking at Espaço Trium!",
       "We’ve received your reservation and will contact you shortly to confirm.",
+      "",
+      "📅 You can add this date to your Google Calendar:",
+      "",
       "Warmly,",
       "The Espaço Trium Team",
       "Marina de Cascais, Shop 37"
@@ -595,24 +602,46 @@ textareas.forEach(el => {
     return (lang === 'en') ? en : pt;
   }
 
-  // On submit: inject a dynamic link (with date & time) into _autoresponse and _next
+  // When the form is submitted:
   form?.addEventListener('submit', function () {
     const lang = document.documentElement.lang || 'pt';
     const date = document.getElementById('date-picker')?.value;
     const time = document.getElementById('time')?.value;
+    const name = document.getElementById('name')?.value || '';
+    const guests = document.getElementById('guests')?.value || '';
 
-    const base = 'https://forsitmedia.github.io/espacio-trium2/thankyou.html';
-    const calLink = (date && time)
-      ? `${base}?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`
-      : base;
+    // Build Google Calendar link
+    const start = new Date(`${date}T${time}:00`);
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // 2 hours
+    const pad = n => n.toString().padStart(2, '0');
+    const fmt = d => `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
 
-    if (auto) auto.value = buildAutoText(lang, calLink);
+    const s = fmt(start);
+    const e = fmt(end);
+    const title = encodeURIComponent("Reserva no Espaço Trium");
+    const details = encodeURIComponent(`Reserva de ${name} para ${guests} pessoas.`);
+    const location = encodeURIComponent("Marina de Cascais, Loja 37, Cascais, Portugal");
 
-    const nextInput = this.querySelector('input[name="_next"]');
-    if (nextInput) nextInput.value = calLink;
+    const gcalLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${s}/${e}&details=${details}&location=${location}`;
+
+    // Add it to autoresponse email and form redirect
+    if (auto) auto.value = buildAutoText(lang) + "\n" + gcalLink;
+
+    const nextInput = this.querySelector('input[name=\"_next\"]');
+    if (nextInput) nextInput.value = 'https://forsitmedia.github.io/espacio-trium2/thankyou.html';
+
+    // Include hidden field so restaurant sees the link too
+    let input = document.getElementById('gcalLinkInput');
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = '_gcalLink';
+      input.id = 'gcalLinkInput';
+      this.appendChild(input);
+    }
+    input.value = gcalLink;
   });
 </script>
-
 
 
 
