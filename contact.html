@@ -327,79 +327,17 @@
     });
   });
 
-  // --- Language Switcher Script ---
-  const langOptions = document.querySelectorAll('.lang-option');
-  const elementsToTranslate = document.querySelectorAll('[data-text-pt], [data-text-en]');
-  const htmlTag = document.querySelector('html');
-
-  // Function to set the language
-  function setLanguage(lang) {
-    // Update active class for language options
-    langOptions.forEach(option => {
-      if (option.dataset.lang === lang) {
-        option.classList.add('active');
-      } else {
-        option.classList.remove('active');
-      }
-    });
-
-    // Update text content for translatable elements
-    elementsToTranslate.forEach(element => {
-      const textKey = `data-text-${lang}`;
-      if (element.hasAttribute(textKey)) {
-        element.innerHTML = element.getAttribute(textKey);
-      }
-    });
-
-    // Update the lang attribute of the HTML tag
-    htmlTag.setAttribute('lang', lang);
-
-    // FIXED: Update document title dynamically using data-text attributes
-    const titleElement = document.querySelector('title');
-    if (titleElement) {
-        if (lang === 'pt') {
-            titleElement.textContent = titleElement.getAttribute('data-text-pt') || 'Contactos | Espaço Trium';
-        } else if (lang === 'en') {
-            titleElement.textContent = titleElement.getAttribute('data-text-en') || 'Contact | Espaço Trium';
-        }
-    }
-  }
-
-  // Add event listeners to language options
-  langOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      setLanguage(option.dataset.lang);
-    });
-  });
-
-  // Initialize language on page load (defaults to Portuguese as per html lang="pt")
-  setLanguage('pt'); // Ensure PT is active initially if html lang="pt"
-
-  // --- NEW: Sub-menu toggle script for "More Languages" - RE-ADDED ---
-  const submenuToggle = document.querySelector('.submenu-toggle');
-  const subMenu = document.querySelector('.sub-menu');
-
-  if (submenuToggle && subMenu) {
-    submenuToggle.addEventListener('click', (e) => {
-      e.preventDefault(); // Prevent default link behavior
-      subMenu.classList.toggle('open-sub-menu');
-    });
-
-    subMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault(); // Prevent default link behavior
-        const langName = e.target.textContent;
-        const langCode = e.target.dataset.langCode;
-        alert(`You selected: ${langName} (${langCode}). \n\nNote: For this demo, full content translation to this language is not implemented. You would typically link to a specific language version of the page or use a more advanced i18n system.`);
+  
 
         // Optionally, close both menus after selection
         subMenu.classList.remove('open-sub-menu');
         menuToggle.classList.remove('open');
         dropdownMenu.classList.remove('open');
-      });
-    });
-  }
+      
 </script>
+
+<script src="language.js"></script>
+
 
 </body>
 </html>

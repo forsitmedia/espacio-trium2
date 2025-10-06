@@ -609,73 +609,6 @@
     });
   }
 
-  // --- Language Switcher Script - ADDED ---
-  const langOptions = document.querySelectorAll('.lang-option');
-  const elementsToTranslate = document.querySelectorAll('[data-text-pt], [data-text-en]');
-  const htmlTag = document.querySelector('html');
-
-  function setLanguage(lang) {
-    langOptions.forEach(option => {
-      if (option.dataset.lang === lang) {
-        option.classList.add('active');
-      } else {
-        option.classList.remove('active');
-      }
-    });
-
-    elementsToTranslate.forEach(element => {
-      const textKey = `data-text-${lang}`;
-      if (element.hasAttribute(textKey)) {
-        element.innerHTML = element.getAttribute(textKey);
-      }
-    });
-
-    htmlTag.setAttribute('lang', lang);
-
-    // Update document title dynamically
-    const titleElement = document.querySelector('title');
-    if (titleElement) {
-      if (lang === 'pt') {
-        titleElement.textContent = titleElement.getAttribute('data-text-pt') || 'Menu | Espaço Trium';
-      } else if (lang === 'en') {
-        titleElement.textContent = titleElement.getAttribute('data-text-en') || 'Menu | Espaço Trium';
-      }
-    }
-  }
-
-  langOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      setLanguage(option.dataset.lang);
-    });
-  });
-
-  // Initialize language on page load
-  setLanguage('pt');
-
-  // --- Sub-menu toggle script for "More Languages" - ADDED ---
-  const submenuToggle = document.querySelector('.submenu-toggle');
-  const subMenu = document.querySelector('.sub-menu');
-
-  if (submenuToggle && subMenu) {
-    submenuToggle.addEventListener('click', (e) => {
-      e.preventDefault(); // Prevent default link behavior
-      subMenu.classList.toggle('open-sub-menu');
-    });
-
-    subMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault(); // Prevent default link behavior
-        const langName = e.target.textContent;
-        const langCode = e.target.dataset.langCode;
-        alert(`You selected: ${langName} (${langCode}). \n\nNote: For this demo, full content translation to this language is not implemented. You would typically link to a specific language version of the page or use a more advanced i18n system.`);
-
-        // Optionally, close both menus after selection
-        subMenu.classList.remove('open-sub-menu');
-        menuToggle.classList.remove('open');
-        dropdownMenu.classList.remove('open');
-      });
-    });
-  }
 
   // --- Existing Scroll Dot Indicator Script ---
   const scrollDot = document.getElementById('scrollDot');
@@ -690,6 +623,7 @@
     scrollDot.style.top = `${newTop}px`;
   });
 </script>
+<script src="language.js"></script>
 
 </body>
 </html>

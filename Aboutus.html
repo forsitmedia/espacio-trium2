@@ -328,21 +328,9 @@
       });
     });
   }
-
-  const langOptions = document.querySelectorAll('.lang-option');
-  const elementsToTranslate = document.querySelectorAll('[data-text-pt], [data-text-en]');
-  const htmlTag = document.querySelector('html');
-  function setLanguage(lang) {
-    langOptions.forEach(o => o.classList.toggle('active', o.dataset.lang === lang));
-    elementsToTranslate.forEach(el => {
-      const key = `data-text-${lang}`;
-      if (el.hasAttribute(key)) el.innerHTML = el.getAttribute(key);
-    });
-    htmlTag.setAttribute('lang', lang);
-  }
-  langOptions.forEach(option => option.addEventListener('click', () => setLanguage(option.dataset.lang)));
-  setLanguage('pt');
 </script>
+
+<script src="language.js"></script>
 
 </body>
 </html>
