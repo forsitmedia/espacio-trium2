@@ -93,7 +93,49 @@
       margin-left: 0rem; /* Add a small margin between language switcher and toggle */
     }
 
-    
+    /* Smooth scrolling for anchor jumps */
+html { scroll-behavior: smooth; }
+
+/* Anchor offset for fixed navbar (tweak 80→your navbar height) */
+#bebidas::before {
+  content: "";
+  display: block;
+  height: 80px;       /* navbar height */
+  margin-top: -80px;  /* negative of above */
+  visibility: hidden;
+}
+
+/* --- Drinks Shortcut Button --- */
+.top-shortcut {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0 1rem;
+}
+
+.scroll-btn {
+  background: #8c4f30;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(140, 79, 48, 0.25);
+}
+
+.scroll-btn:hover {
+  background: #a16241;
+  transform: translateY(-2px);
+}
+
+.scroll-btn:active {
+  transform: translateY(0);
+}
+
+
+
     .menu-toggle .bar {
       width: 28px;
       height: 3px;
@@ -369,6 +411,9 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 1rem;
+    gap: 1rem;
+    font-style: italic;
   }
 
   .molhos-title {
@@ -435,6 +480,16 @@
      data-text-en="Handcrafted menu, prepared with fresh ingredients. Prices in euros.">
     Handcrafted menu, prepared with fresh ingredients. Prices in euros.
   </p>
+
+<!-- Shortcut Button -->
+<div class="top-shortcut">
+  <a href="#bebidas" class="scroll-btn" id="drinksButton"
+     data-text-pt="🍷 Ver Bebidas" data-text-en="🍷 See Drinks">
+    🍷 See Drinks
+  </a>
+</div>
+
+
 
   <!-- ======================= COUVERT / ENTRADAS ======================= -->
   <section class="menu-section" id="entradas">
@@ -610,6 +665,38 @@
     </ul>
   </section>
 
+
+ <!-- ======================= CARNES ======================= -->
+  <section class="menu-section" id="carnes">
+    <div class="section-wrap">
+      <span class="section-title" data-text-pt="CARNES" data-text-en="MEATS">CARNES</span>
+    </div>
+    <ul class="menu-list">
+
+      <li class="menu-item"><span class="dish" data-text-pt="Tomahawk grelhado (2 pax)" data-text-en="Tomahawk grilled (2 pax)">Tomahawk grelhado (2 pax)</span><span class="leader"></span><span class="price">€89,00</span> <!-- printed --></li>
+
+      <li class="menu-item"><span class="dish" data-text-pt="Chuletón premium" data-text-en="Premium ribeye steak">Chuletón premium</span><span class="leader"></span><span class="price">€45,00</span> <!-- printed --></li>
+
+      <li class="menu-item"><span class="dish" data-text-pt="Bife do lombo (grelhado ou com molho)" data-text-en="Sirloin steak (grilled or with sauce)">Bife do lombo (grelhado ou com molho)</span><span class="leader"></span><span class="price">€34,00</span> <!-- printed --></li>
+
+
+
+      <li class="molhos-section"><span class="dish" data-text-pt="<strong> Molhos </strong>: Pimienta Verde I Cogumelos I Mostarda I Cerveja e alho I Acebolado" data-text-en="<strong> Sauces </strong>: Green peppercorn I Mushrooms I Mustard I Beer and Garlic I Onions">Bife do lombo (grelhado ou com molho)</span><span class="leader"></span>
+
+
+      <li class="menu-item"><span class="dish" data-text-pt="Bitoque" data-text-en="Portuguese-style steak">Bitoque</span><span class="leader"></span><span class="price">€16,90</span></li>
+      <li class="menu-item"><span class="dish" data-text-pt="Prego no pão" data-text-en="Steak sandwich">Prego no pão</span><span class="leader"></span><span class="price">€10,90</span></li>
+
+
+      <li class="menu-item"><span class="dish" data-text-pt="Caril de frango" data-text-en="Chicken curry">Caril de frango</span><span class="leader"></span><span class="price">€19,90</span></li>
+
+      <li class="menu-item"><span class="dish" data-text-pt="Peito de frango com manteiga e ervas" data-text-en="Chicken breast with butter & herbs">Peito de frango com manteiga e ervas</span><span class="leader"></span><span class="price">€18,90</span></li>
+
+      <li class="menu-item"><span class="dish" data-text-pt="Prego de frango no pão (molho mostarda)" data-text-en="Chicken steak sandwich (mustard sauce)">Prego de frango no pão (molho mostarda)</span><span class="leader"></span><span class="price">€12,90</span></li>
+    </ul>
+    
+
+
   <!-- ======================= ESPECIALIDADES ======================= -->
   <section class="menu-section" id="especialidades">
     <div class="section-wrap">
@@ -640,49 +727,6 @@
     </ul>
   </section>
 
-  <!-- ======================= CARNES ======================= -->
-  <section class="menu-section" id="carnes">
-    <div class="section-wrap">
-      <span class="section-title" data-text-pt="CARNES" data-text-en="MEATS">CARNES</span>
-    </div>
-    <ul class="menu-list">
-
-      <li class="menu-item"><span class="dish" data-text-pt="Tomahawk grelhado (2 pax)" data-text-en="Tomahawk grilled (2 pax)">Tomahawk grelhado (2 pax)</span><span class="leader"></span><span class="price">€89,00</span> <!-- printed --></li>
-
-      <li class="menu-item"><span class="dish" data-text-pt="Chuletón premium" data-text-en="Premium ribeye steak">Chuletón premium</span><span class="leader"></span><span class="price">€45,00</span> <!-- printed --></li>
-
-      <li class="menu-item"><span class="dish" data-text-pt="Bife do lombo (grelhado ou com molho)" data-text-en="Sirloin steak (grilled or with sauce)">Bife do lombo (grelhado ou com molho)</span><span class="leader"></span><span class="price">€34,00</span> <!-- printed --></li>
-
-      <!-- Molhos / Sauces subsection -->
-<div class="molhos-section">
-  <div class="molhos-title">
-    <span class="molhos-heading" data-text-pt="Molhos" data-text-en="Sauces">Molhos</span>
-    <span class="molhos-sub" data-text-pt="molhos" data-text-en="sauces">sauces</span>
-  </div>
-
-  <ul class="molhos-list">
-    <li><span data-text-pt="Pimenta verde" data-text-en="Green peppercorn">Pimenta verde</span> 
-    <li><span data-text-pt="Cogumelos" data-text-en="Mushrooms">Cogumelos</span> 
-
-    <li><span data-text-pt="Mostarda" data-text-en="Mustard">Mostarda</span>
-
-    <li><span data-text-pt="Cerveja e alho" data-text-en="Beer and garlic">Cerveja e alho</span>
-
-    <li><span data-text-pt="Acebolado" data-text-en="Caramelized onion">Acebolado</span> 
-  </ul>
-</div>
-
-      <li class="menu-item"><span class="dish" data-text-pt="Bitoque" data-text-en="Portuguese-style steak">Bitoque</span><span class="leader"></span><span class="price">€16,90</span></li>
-      <li class="menu-item"><span class="dish" data-text-pt="Prego no pão" data-text-en="Steak sandwich">Prego no pão</span><span class="leader"></span><span class="price">€10,90</span></li>
-
-
-      <li class="menu-item"><span class="dish" data-text-pt="Caril de frango" data-text-en="Chicken curry">Caril de frango</span><span class="leader"></span><span class="price">€19,90</span></li>
-
-      <li class="menu-item"><span class="dish" data-text-pt="Peito de frango com manteiga e ervas" data-text-en="Chicken breast with butter & herbs">Peito de frango com manteiga e ervas</span><span class="leader"></span><span class="price">€18,90</span></li>
-
-      <li class="menu-item"><span class="dish" data-text-pt="Prego de frango no pão (molho mostarda)" data-text-en="Chicken steak sandwich (mustard sauce)">Prego de frango no pão (molho mostarda)</span><span class="leader"></span><span class="price">€12,90</span></li>
-    </ul>
-
     
 
 
@@ -698,9 +742,10 @@
     </ul>
   </section>
 
-
-    <h2 class="menu-subhead" data-text-pt="Acompanhamentos" data-text-en="Sides">Acompanhamentos</h2>
-    <ul class="menu-list">
+<section class="menu-section" id="vegetariano">
+    <div class="section-wrap">
+      <span class="section-title" data-text-pt="ACCOMPANHAMENTOS" data-text-en="SIDES">SIDES</span>
+    </div>
       <li class="menu-item"><span class="dish" data-text-pt="Arroz" data-text-en="Rice">Arroz</span><span class="leader"></span><span class="price">€4,50</span></li>
 
       <li class="menu-item"><span class="dish" data-text-pt="Feijão preto" data-text-en="Black beans">Feijão preto</span><span class="leader"></span><span class="price">€5,00</span></li>
