@@ -161,7 +161,7 @@
 /*  RESERVATION SECTION */
 
    .reservation-section {
-    padding: 3rem 2rem;
+    padding: 2rem 2rem;
     text-align: center;
     background: #fff;
     max-width: 700px;
@@ -171,7 +171,8 @@
   }
 
   .reservation-section h1 {
-    color: #8c4f30;
+    color: #8c4f3088;
+    font-size: 50px;
     margin-bottom: 1rem;
   }
 
@@ -186,6 +187,7 @@
     background-color: #8c4f30;
     color: white;
     font-weight: bold;
+    margin-bottom: 20px;
     padding: 1rem 2rem;
     border-radius: 10px;
     font-size: 1.2rem;
@@ -202,47 +204,50 @@
     color: #666;
     margin: 1.5rem 0 0.8rem;
   }
-
-  .whatsapp-button {
-    display: inline-block;
-    background-color: #25D366;
-    color: white;
-    font-weight: bold;
-    padding: 0.9rem 1.8rem;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    text-decoration: none;
-    transition: background 0.3s ease;
-  }
-
-  .whatsapp-button:hover {
-    background-color: #1da851;
-  }
-
-  .reminder {
-    margin-top: 2rem;
-    text-align: left;
+ .reminder {
+    text-align: center;
+    margin-top: 2.5rem;
   }
 
   .reminder h3 {
     color: #8c4f30;
-    margin-bottom: 0.8rem;
-    text-align: center;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
   }
 
-  .reminder ul {
+  .dot-list {
     list-style: none;
-    padding-left: 0;
+    padding: 0;
     margin: 0 auto;
     display: inline-block;
     text-align: left;
   }
 
-  .reminder li {
+  .dot-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+    font-size: 1.05rem;
     color: #333;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
   }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #8c4f30 0%, #6f3c24 100%);
+    box-shadow: 0 0 6px rgba(140,79,48,0.4);
+    flex-shrink: 0;
+    animation: pulse 2.5s infinite ease-in-out;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.25); opacity: 0.7; }
+  }
+
+  
 
     /* Footer fixed to bottom */
     footer {
@@ -254,7 +259,7 @@
       margin-top: 4rem;
       position: relative;
     }
-    
+
   </style>
 </head>
 <body>
@@ -288,40 +293,38 @@
     <div class="container">
       <h1 data-text-pt="Reserve uma Mesa" data-text-en="Reserve a Table">Reserve a Table</h1>
  
-
+<br>
   
-    <p data-text-pt="Para fazer a sua reserva, ligue-nos diretamente. Estamos à sua disposição para confirmar a mesa e ajudar com qualquer pedido especial."
-       data-text-en="To make your reservation, call us directly. We’ll be happy to confirm your table and assist with any special requests.">
-       To make your reservation, call us directly. We’ll be happy to confirm your table and assist with any special requests.
+    <p data-text-pt="Para fazer a sua reserva, ligue-nos diretamente."
+       data-text-en="To make your reservation, call us directly.">
+       To make your reservation, call us directly.
     </p>
 
-     <h3 data-text-pt="Horário" data-text-en="Hours">Horário</h3>
-    <p data-text-pt="Todos os Dias: <br> das 10:00h as 16:00h <br> das 18:00h as 22:00h" data-text-en="Everyday: <br> from 10:00h to 16:00h <br> from 18:00h to 22:00h">Todos os Dias: <br> das 10:00h as 16:00h <br> das 18:00h as 22:00h</p>
 
-    <a href="tel:+351214822312" class="call-button" 
+ <a href="tel:+351214822312" class="call-button" 
        data-text-pt="📞 Ligar Agora" data-text-en="📞 Call Now">📞 Call Now</a>
 
-    <p class="or-text" data-text-pt="ou, se preferir:" data-text-en="or, if you prefer:">or, if you prefer:</p>
+       <br>
 
-    <a href="https://wa.me/351214822312" target="_blank" class="whatsapp-button"
-       data-text-pt="💬 Envie-nos uma mensagem no WhatsApp" data-text-en="💬 Message us on WhatsApp">
-       💬 Message us on WhatsApp
-    </a>
+   
+    <p data-text-pt="Todos os Dias: <br> das 10:00h as 16:00h <br> das 18:00h as 22:00h" data-text-en="Everyday: <br> from 10:00h to 16:00h <br> from 18:00h to 22:00h">Todos os Dias: <br> das 10:00h as 16:00h <br> das 18:00h as 22:00h</p>
 
-    <div class="reminder">
-      <h3 data-text-pt="Antes de ligar ou enviar mensagem, lembre-se de indicar:" data-text-en="Before calling or texting, remember to mention:">
-        Before calling or texting, remember to mention:
-      </h3>
-      <ul>
-        <li data-text-pt="👉 Quantas pessoas" data-text-en="👉 How many people">👉 How many people</li>
-        <li data-text-pt="👉 Se prefere mesa dentro ou fora" data-text-en="👉 If you prefer to sit inside or outside">👉 If you prefer to sit inside or outside</li>
-        <li data-text-pt="👉 Qualquer pedido especial (aniversário, alergias, etc.)" data-text-en="👉 Any special request (birthday, allergies, etc.)">
-          👉 Any special request (birthday, allergies, etc.)
-        </li>
-      </ul>
-    </div>
-  </div>
-</section>
+    
+ 
+
+    
+
+ <div class="reminder">
+  <h3 data-text-pt="Antes de ligar ou enviar mensagem, lembre-se de indicar:" data-text-en="Before calling or texting, remember to mention:">
+    Before calling or texting, remember to mention:
+  </h3>
+
+  <ul class="dot-list">
+    <li><span class="dot"></span> <span data-text-pt="Quantas pessoas" data-text-en="How many people">How many people</span></li>
+    <li><span class="dot"></span> <span data-text-pt="Mesa dentro ou fora" data-text-en="Inside or outside table">Inside or outside table</span></li>
+    <li><span class="dot"></span> <span data-text-pt="Pedidos especiais (aniversário, alergias...)" data-text-en="Special requests (birthday, allergies...)">Special requests (birthday, allergies...)</span></li>
+  </ul>
+</div>
 
     </div>
   </section>
