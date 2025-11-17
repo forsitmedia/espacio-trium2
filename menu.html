@@ -279,6 +279,16 @@ html { scroll-behavior: smooth; }
     text-align: left;
   }
 
+  .menu-subhead .smallcaps {
+  font-weight: 550;        /* lighter than the title */
+  font-size: 0.8em;        /* a bit smaller */
+  letter-spacing: 0.12em;  /* more spaced out */
+  text-transform: uppercase;
+  color: #5f361d;          /* slightly softer brown */
+  margin-left: 11rem;     /* little space after "Sangrias" */
+
+}
+
   /* List with dotted leaders */
   .menu-list {
     list-style: none;
@@ -847,7 +857,12 @@ html { scroll-behavior: smooth; }
     </div>
 
     <div class="soft-card">
-      <h3 class="menu-subhead" data-text-pt="Sangrias" data-text-en="Sangrias">Sangrias <span class="smallcaps">copo / jarro</span></h3>
+      <h3 class="menu-subhead">
+  <span data-text-pt="Sangrias" data-text-en="Sangrias">Sangrias</span>
+  <span class="smallcaps" data-text-pt="copo / jarro" data-text-en="glass / jug">
+    copo / jarro
+  </span>
+</h3>
       <ul class="menu-list">
         <li class="menu-item"><span class="dish" data-text-pt="Sangria tinto" data-text-en="Red sangria">Sangria tinto</span><span class="leader"></span><span class="price">€12,50 / €19,90</span></li>
         <li class="menu-item"><span class="dish" data-text-pt="Sangria branco" data-text-en="White sangria">Sangria branco</span><span class="leader"></span><span class="price">€12,50 / €19,90</span></li>
